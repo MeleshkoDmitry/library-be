@@ -4,17 +4,23 @@ const models = require('../../mongo/library.schema');
 
 class LibraryRepository {
 
-    find(title = '.', author = '.') {
+    find(title = '.', author = '.', page, perPage) {
         return new Promise(function (resolve, reject) {
             models.find({})
                 .and([
                     { 'title': { $regex: title, $options: 'ig' } },
                     { 'author': { $regex: author, $options: 'ig' } }
                 ])
-                .exec(function (error, data) {
+                .skip((perPage * page) - perPage)
+                .limit(Number(perPage))
+                .sort({title: 1})
+                .exec(function (error, result) {
                     if (error) reject(error);
-                    resolve(data);
-                })
+                    models.count().exec(function (error, count) {
+                        if (error) reject(error);
+                        resolve([result, Math.ceil(count / perPage)]);
+                    });
+                });
         })
     };
 

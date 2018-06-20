@@ -1,10 +1,13 @@
+const fs = require('fs');
+
 class CacheManager {
     constructor() {
         this._store = {};
     }
 
     isEmpty(cacheId, key) {
-        return this._store.hasOwnProperty(cacheId) && this._store[cacheId].hasOwnProperty(key);
+        return this._store.hasOwnProperty(cacheId)
+            && this._store[cacheId].hasOwnProperty(key)
     }
 
     modifyCache(cacheId, key, value) {
@@ -40,9 +43,3 @@ class CacheManager {
 }
 
 module.exports = CacheManager;
-
-function isEmptyCache(cacheId) {
-    if (!this._store.hasOwnProperty(cacheId)) {
-        this._store[cacheId] = {};
-    }
-}

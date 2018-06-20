@@ -4,7 +4,7 @@ class LibController {
       }
 
       find(req, res, next) {
-            this._libService.find(req.query.title, req.query.author)
+            this._libService.find(req.query.title, req.query.author, req.query.page, req.query.perPage)
                   .then((data) => {
                         res.json(data);
                   })
@@ -17,6 +17,7 @@ class LibController {
       addNewBook(req, res, next) {
             this._libService.addToLibrary(req.body.title, req.body.author)
                   .then((data) => {
+                        console.log(data);
                         res.json(data).status(201);
                   })
                   .catch((err) => {
@@ -27,7 +28,7 @@ class LibController {
 
       delBook(req, res, next) {
             this._libService.deleteBookFromLibrary(req.params.id)
-                  .then((data) => {
+                  .then(() => {
                         res.status(204).send({ message: 'Successful deleted' });
                   })
                   .catch((err) => {

@@ -8,16 +8,16 @@ class LibraryService {
         this._cacheManager = cacheManager;
     }
 
-    find(title, author) {
-        const key = title + author;
+    find(title, author, page, perPage) {
+        const key = `${title};${author};${page};${perPage}`
         if (this._cacheManager.isEmpty(findcacheId, key)) {
-            return this._cacheManager.find(findcacheId, key);
+            return this._cacheManager.find(findcacheId, key, page);
         } else {
-            return this._libRepository.find(title, author)
+            return this._libRepository.find(title, author, page, perPage)
                 .then(data => {
                     return this._cacheManager.modifyCache(findcacheId, key, data);
-                }).then(data => {
-                    return this._cacheManager.find(findcacheId, key);
+                }).then(() => {
+                    return this._cacheManager.find(findcacheId, key, page);
                 })
         }
     }
@@ -62,7 +62,7 @@ class LibraryService {
             return this._libRepository.findById(id)
                 .then((data) => {
                     return this._cacheManager.modifyCache(cacheId, id, data)
-                        .then((data) => { return this._cacheManager.find(cacheId, id) });
+                        .then(() => { return this._cacheManager.find(cacheId, id) });
                 });
         }
     }
