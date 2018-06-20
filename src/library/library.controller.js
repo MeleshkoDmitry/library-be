@@ -17,7 +17,6 @@ class LibController {
       addNewBook(req, res, next) {
             this._libService.addToLibrary(req.body.title, req.body.author)
                   .then((data) => {
-                        console.log(data);
                         res.json(data).status(201);
                   })
                   .catch((err) => {

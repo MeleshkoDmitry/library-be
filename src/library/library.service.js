@@ -11,13 +11,13 @@ class LibraryService {
     find(title, author, page, perPage) {
         const key = `${title};${author};${page};${perPage}`
         if (this._cacheManager.isEmpty(findcacheId, key)) {
-            return this._cacheManager.find(findcacheId, key, page);
+            return this._cacheManager.find(findcacheId, key);
         } else {
             return this._libRepository.find(title, author, page, perPage)
                 .then(data => {
                     return this._cacheManager.modifyCache(findcacheId, key, data);
                 }).then(() => {
-                    return this._cacheManager.find(findcacheId, key, page);
+                    return this._cacheManager.find(findcacheId, key);
                 })
         }
     }

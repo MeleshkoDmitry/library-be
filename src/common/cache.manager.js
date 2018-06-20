@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 class CacheManager {
     constructor() {
         this._store = {};
