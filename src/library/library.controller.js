@@ -4,7 +4,7 @@ class LibController {
       }
 
       find(req, res, next) {
-            this._libService.find(req.query.title, req.query.author, req.query.page, req.query.pageSize)
+            this._libService.find(req.query.title, req.query.author, req.query.page, req.query.pageSize, req.query.sort)
                   .then((data) => {
                         res.json(data);
                   })

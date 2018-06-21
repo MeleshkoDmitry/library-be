@@ -4,7 +4,7 @@ const models = require('../../mongo/library.schema');
 
 class LibraryRepository {
 
-    find(title = '.', author = '.', page, pageSize) {
+    find(title = '.', author = '.', page, pageSize, sort) {
         return new Promise(function (resolve, reject) {
             models.find({})
                 .and([
@@ -13,7 +13,7 @@ class LibraryRepository {
                 ])
                 .skip((pageSize * page) - pageSize)
                 .limit(Number(pageSize))
-                .sort({ title: 1 })
+                .sort({ title: Number(sort) })
                 .exec(function (error, result) {
                     if (error) reject(error);
                     models.count({ 'title': { $regex: title, $options: 'ig' }, 'author': { $regex: author, $options: 'ig' } })

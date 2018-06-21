@@ -8,12 +8,12 @@ class LibraryService {
         this._cacheManager = cacheManager;
     }
 
-    find(title, author, page, pageSize) {
+    find(title, author, page, pageSize, sort) {
         const key = `${title};${author};${page};${pageSize}`
         if (this._cacheManager.isEmpty(findcacheId, key)) {
             return this._cacheManager.find(findcacheId, key);
         } else {
-            return this._libRepository.find(title, author, page, pageSize)
+            return this._libRepository.find(title, author, page, pageSize, sort)
                 .then(data => {
                     return this._cacheManager.modifyCache(findcacheId, key, data);
                 }).then(() => {
