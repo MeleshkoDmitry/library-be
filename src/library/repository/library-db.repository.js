@@ -4,22 +4,23 @@ const models = require('../../mongo/library.schema');
 
 class LibraryRepository {
 
-    find(title = '.', author = '.', page, perPage) {
+    find(title = '.', author = '.', page, pageSize) {
         return new Promise(function (resolve, reject) {
             models.find({})
                 .and([
                     { 'title': { $regex: title, $options: 'ig' } },
                     { 'author': { $regex: author, $options: 'ig' } }
                 ])
-                .skip((perPage * page) - perPage)
-                .limit(Number(perPage))
-                .sort({title: 1})
+                .skip((pageSize * page) - pageSize)
+                .limit(Number(pageSize))
+                .sort({ title: 1 })
                 .exec(function (error, result) {
                     if (error) reject(error);
-                    models.count().exec(function (error, count) {
-                        if (error) reject(error);
-                        resolve([result, Math.ceil(count / perPage)]);
-                    });
+                    models.count({ 'title': { $regex: title, $options: 'ig' }, 'author': { $regex: author, $options: 'ig' } })
+                        .exec(function (error, count) {
+                            if (error) reject(error);
+                            resolve([result, Math.ceil(count / pageSize)]);
+                        });
                 });
         })
     };
