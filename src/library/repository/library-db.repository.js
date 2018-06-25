@@ -19,7 +19,7 @@ class LibraryRepository {
                     models.count({ 'title': { $regex: title, $options: 'ig' }, 'author': { $regex: author, $options: 'ig' } })
                         .exec(function (error, count) {
                             if (error) reject(error);
-                            resolve([result, Math.ceil(count / pageSize)]);
+                            resolve({ books: result, totalRecords: Math.ceil(count) });
                         });
                 });
         })
