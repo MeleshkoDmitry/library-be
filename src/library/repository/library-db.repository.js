@@ -5,7 +5,7 @@ const models = require('../../mongo/library.schema');
 class LibraryRepository {
 
     find(title = '.', author = '.', page, pageSize, sort) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             models.find({})
                 .and([
                     { 'title': { $regex: title, $options: 'ig' } },
@@ -14,10 +14,10 @@ class LibraryRepository {
                 .skip((pageSize * page) - pageSize)
                 .limit(Number(pageSize))
                 .sort({ title: Number(sort) })
-                .exec(function (error, result) {
+                .exec((error, result) => {
                     if (error) reject(error);
                     models.count({ 'title': { $regex: title, $options: 'ig' }, 'author': { $regex: author, $options: 'ig' } })
-                        .exec(function (error, count) {
+                        .exec((error, count) => {
                             if (error) reject(error);
                             resolve({ books: result, totalRecords: Math.ceil(count) });
                         });
@@ -26,10 +26,10 @@ class LibraryRepository {
     };
 
     addBook(title, author) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             models.create({
                 'title': title, 'author': author
-            }, function (error, data) {
+            }, (error, data) => {
                 if (error) reject(error);
                 resolve(data);
             });
@@ -38,10 +38,10 @@ class LibraryRepository {
     };
 
     deleteBook(id) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             models.remove({
                 '_id': ObjectId(id)
-            }, function (error, data) {
+            }, (error, data) => {
                 if (error || data.n === 0) reject(error);
                 resolve(data);
             })
@@ -49,13 +49,9 @@ class LibraryRepository {
     }
 
     editBook(id, title, author) {
-        return new Promise(function (resolve, reject) {
-            models.update({
-                '_id': ObjectId(id),
-            }, {
-                    'title': title,
-                    'author': author
-                }, function (error, data) {
+        return new Promise((resolve, reject) => {
+            models.findByIdAndUpdate(id, { title, author }, { new: true },
+                (error, data) => {
                     if (error || data.n === 0) reject(error);
                     resolve(data);
                 });
@@ -63,10 +59,10 @@ class LibraryRepository {
     };
 
     findById(id) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             models
                 .findOne({ _id: ObjectId(id) })
-                .lean().exec(function (error, data) {
+                .lean().exec((error, data) => {
                     if (error) reject(error);
                     resolve(data);
                 });

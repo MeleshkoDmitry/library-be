@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 const LibraryRepository = require('./repository/library-db.repository');
 const libRepository = new LibraryRepository();
@@ -13,11 +13,9 @@ const libService = new LibraryService(libRepository, cacheManager);
 const LibraryController = require('./library.controller');
 const libController = new LibraryController(libService);
 
-//validator
 const LibraryValidator = require('./library.validator');
 const libValidator = new LibraryValidator();
 
-//Routes Library
 router.get('/', libValidator.find,
     libController.find.bind(libController));
 

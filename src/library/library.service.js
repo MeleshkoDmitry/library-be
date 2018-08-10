@@ -1,6 +1,5 @@
-'use strict';
-const cacheId = 'books';
-const findcacheId = 'books_find';
+const CACHE_ID = 'books';
+const FIND_CACHE_ID = 'books_find';
 
 class LibraryService {
     constructor(libRepository, cacheManager) {
@@ -10,60 +9,40 @@ class LibraryService {
 
     find(title, author, page, pageSize, sort) {
         const key = `${title};${author};${page};${pageSize}`
-        if (this._cacheManager.isEmpty(findcacheId, key)) {
-            return this._cacheManager.find(findcacheId, key);
+        if (this._cacheManager.isEmpty(FIND_CACHE_ID, key)) {
+            return this._cacheManager.find(FIND_CACHE_ID, key);
         } else {
             return this._libRepository.find(title, author, page, pageSize, sort)
-                .then(data => {
-                    return this._cacheManager.modifyCache(findcacheId, key, data);
-                }).then(() => {
-                    return this._cacheManager.find(findcacheId, key);
-                })
+                .then(data => this._cacheManager.modifyCache(FIND_CACHE_ID, key, data))
+                .then(() => this._cacheManager.find(FIND_CACHE_ID, key))
         }
     }
 
     addToLibrary(title, author) {
         return this._libRepository.addBook(title, author)
-            .then(data => {
-                return this._cacheManager.modifyCache(cacheId, data.id, data)
-                    .then(data => {
-                        return this._cacheManager.deleteCache(findcacheId, data)
-                    })
-            });
+            .then(data => this._cacheManager.modifyCache(CACHE_ID, data.id, data))
+            .then(data => this._cacheManager.deleteCache(FIND_CACHE_ID, data))
     }
 
     editBookFromLibrary(id, title, author) {
         return this._libRepository.editBook(id, title, author)
-            .then((data) => {
-                return this._libRepository.findById(id)
-                    .then((data) => {
-                        return this._cacheManager.modifyCache(cacheId, id, data)
-                            .then(data => {
-                                return this._cacheManager.deleteCache(findcacheId, data)
-                            })
-                    });
-            });
+            .then(book => this._cacheManager.modifyCache(CACHE_ID, id, book))
+            .then(book => this._cacheManager.deleteCache(FIND_CACHE_ID, book));
     }
 
     deleteBookFromLibrary(id) {
         return this._libRepository.deleteBook(id)
-            .then((data) => {
-                return this._cacheManager.deleteRecord(cacheId, id)
-                    .then((data) => {
-                        return this._cacheManager.deleteCache(findcacheId, data)
-                    })
-            });
+            .then(() => this._cacheManager.deleteRecord(CACHE_ID, id))
+            .then(data => this._cacheManager.deleteCache(FIND_CACHE_ID, data))
     }
 
     findById(id) {
-        if (this._cacheManager.isEmpty(cacheId, id)) {
-            return this._cacheManager.find(cacheId, id);
+        if (this._cacheManager.isEmpty(CACHE_ID, id)) {
+            return this._cacheManager.find(CACHE_ID, id);
         } else {
             return this._libRepository.findById(id)
-                .then((data) => {
-                    return this._cacheManager.modifyCache(cacheId, id, data)
-                        .then(() => { return this._cacheManager.find(cacheId, id) });
-                });
+                .then((data) => this._cacheManager.modifyCache(CACHE_ID, id, data)
+                    .then(() => this._cacheManager.find(CACHE_ID, id)));
         }
     }
 }
