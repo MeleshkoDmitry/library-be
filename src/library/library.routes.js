@@ -16,19 +16,19 @@ const libController = new LibraryController(libService);
 const LibraryValidator = require('./library.validator');
 const libValidator = new LibraryValidator();
 
-router.get('/', libValidator.find,
-    libController.find.bind(libController));
-
 router.post('/', libValidator.addNewBook,
-    libController.addNewBook.bind(libController));
+  libController.addBook.bind(libController));
+
+router.get('/', libValidator.find,
+  libController.find.bind(libController));
 
 router.delete('/:id', libValidator.delBook,
-    libController.delBook.bind(libController));
+  libController.deleteBook.bind(libController));
 
 router.put('/:id', libValidator.editBook,
-    libController.editBook.bind(libController));
+  libController.editBook.bind(libController));
 
 router.get('/:id', libValidator.findById,
-    libController.findByID.bind(libController));
+  libController.findById.bind(libController));
 
 module.exports = router;
